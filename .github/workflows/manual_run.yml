@@ -29,14 +29,6 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
       - name: Restore dependencies
         run: dotnet restore
 
@@ -56,12 +48,6 @@ jobs:
             echo "Copying from $dir"
             cp -r "$dir"/* allure-results/
           done
-
-      - name: Upload Allure Results (for debugging)
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-results
-          path: allure-results
 
       - name: Install Allure CLI and Generate Report
         uses: simple-elf/allure-report-action@v1.7
