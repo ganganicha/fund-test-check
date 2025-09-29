@@ -38,6 +38,7 @@ public class HeaderPage
     // Assert that key elements are visible on the home page
     public async Task assertHeaderPageUIElementsDisplayed()
     {
+        await _page.WaitForLoadStateAsync(LoadState.Load);
         Assert.True(await _page.GetByRole(AriaRole.Link, new() { Name = fundaLinkText, Exact = true }).IsVisibleAsync());
         Assert.True(await _page.Locator(kopenButtonId).IsVisibleAsync());
         Assert.True(await _page.Locator(hurenButtonId).IsVisibleAsync());
@@ -58,18 +59,19 @@ public class HeaderPage
     // Click the Inloggen button to navigate to the login page
     public async Task clickInloggenButton()
     {
+        await _page.WaitForLoadStateAsync(LoadState.Load);
         var inloggenButton = _page.Locator($"button:has-text('{inloggenButtonText}')").First;
-        await inloggenButton.WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 15000 });
+        await inloggenButton.WaitForAsync(new() { State = WaitForSelectorState.Visible });
         await inloggenButton.HoverAsync();
         await inloggenButton.ClickAsync();
         await _page.GetByRole(AriaRole.Heading, new() { Name = loginHeadingText })
-                   .WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 15000 });
+                   .WaitForAsync(new() { State = WaitForSelectorState.Visible });
     }
 
     // Verify the button label after logging in with a valid user.
     public async Task verifySuccessfulLogin()
     {
-        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await _page.WaitForLoadStateAsync(LoadState.Load);
         var accountButton = _page.Locator(accountButtonId);
         await accountButton.WaitForAsync(new() { State = WaitForSelectorState.Visible });
         Assert.Equal(loggenButtonText, await accountButton.InnerTextAsync());
@@ -78,6 +80,7 @@ public class HeaderPage
     // Click the logout button from the account dropdown menu
     public async Task clickLogoutButton()
     {
+        await _page.WaitForLoadStateAsync(LoadState.Load);
         var accountButton = _page.Locator(accountButtonId);
         await accountButton.WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 15000 });
         await accountButton.HoverAsync();

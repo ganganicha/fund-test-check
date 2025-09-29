@@ -1,9 +1,9 @@
 using Microsoft.Playwright;
 using Xunit;
 using Allure.Net.Commons;
-using System.IO;
+using PlaywrightTests.Pages;
 
-namespace PlaywrightTests;
+namespace PlaywrightTests.Base;
 
 public class PlaywrightTestBase : IAsyncLifetime
 {
@@ -45,7 +45,6 @@ public class PlaywrightTestBase : IAsyncLifetime
 
         var page = await context.NewPageAsync();
 
-        // Optional: maximize window in non-headless mode
         if (!Headless)
             await page.SetViewportSizeAsync(1920, 1080);
 
@@ -57,5 +56,13 @@ public class PlaywrightTestBase : IAsyncLifetime
         var screenshotBytes = await page.ScreenshotAsync();
         Console.WriteLine("Capturing screenshot and adding to Allure...");
         AllureApi.AddAttachment(name, "image/png", screenshotBytes);
+    }
+    protected async Task goToLandingPage(LandingPage landingPage, HeaderPage headerPage)
+    {
+        AllureLifecycle.Instance.StartStep(new StepResult { name = "Navigate to LandingPage" });
+        await landingPage.GoTo("https://www.funda.nl/");
+        await landingPage.acceptCookies();
+        await headerPage.waitForLandingPage();
+        AllureLifecycle.Instance.StopStep();
     }
 }

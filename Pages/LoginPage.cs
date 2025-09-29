@@ -29,6 +29,7 @@ public class LoginPage
     // Verify Login Page details
     public async Task verifyLoginPageIsDisplayed()
     {
+        await _page.WaitForLoadStateAsync(LoadState.Load);
         await _page.GetByRole(AriaRole.Heading, new() { Name = HeaderPage.loginHeadingText }).IsVisibleAsync();
         await _page.GetByText(emailLabelText).IsVisibleAsync();
         await _page.GetByText(passwordLabelText, new() { Exact = true }).IsVisibleAsync();
@@ -41,8 +42,4 @@ public class LoginPage
         await _page.GetByRole(AriaRole.Textbox, new() { Name = passwordTextboxName }).FillAsync(password);
         await _page.GetByRole(AriaRole.Button, new() { Name = loginSubmitButtonText }).ClickAsync();
     }
-
-    
-     
-
 }
