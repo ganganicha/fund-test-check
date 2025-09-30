@@ -1,4 +1,4 @@
-name: Manual Playwright Test with Allure
+Manual Playwright Test with Allure
 
 on:
   workflow_dispatch:
@@ -40,7 +40,6 @@ jobs:
 
       - name: Run xUnit tests
         run: dotnet test --logger:"console;verbosity=detailed"
-        continue-on-error: true  # ✅ Allow report generation even if tests fail
 
       - name: Copy Allure results from bin to root
         run: |
@@ -49,18 +48,12 @@ jobs:
             echo "Copying from $dir"
             cp -r "$dir"/* allure-results/
           done
-        continue-on-error: true  # ✅ Always try to copy results
-
-      - name: List Allure Results (Debug)
-        run: ls -R allure-results || echo "No results found"
-        continue-on-error: true
 
       - name: Install Allure CLI and Generate Report
         uses: simple-elf/allure-report-action@v1.7
         with:
           allure_results: allure-results
           allure_report: allure-report
-        continue-on-error: true  # ✅ Always try to generate report
 
       - name: Deploy Allure Report to gh-pages
         uses: peaceiris/actions-gh-pages@v3
@@ -69,8 +62,3 @@ jobs:
           publish_dir: ./allure-report
           publish_branch: gh-pages
           force_orphan: true
-        continue-on-error: true  # ✅ Always deploy report
-
-      - name: Fail job if tests failed
-        if: failure()
-        run: exit 1
