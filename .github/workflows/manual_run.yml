@@ -39,11 +39,13 @@ jobs:
         run: pwsh bin/Debug/net*/playwright.ps1 install
 
       - name: Run xUnit tests
-        run: dotnet test --logger:"console;verbosity=detailed"
-        continue-on-error: true  # ✅ Allow next steps to run even if tests fail
+        id: run_tests
+        run: |
+          dotnet test --logger:"console;verbosity=detailed"
+        continue-on-error: true 
 
       - name: Copy Allure results from bin to root
-        if: always()  # ✅ Always run this step
+        if: always()  
         run: |
           mkdir -p allure-results
           for dir in $(find . -type d -path "*/bin/Debug/net*/allure-results"); do
@@ -52,14 +54,14 @@ jobs:
           done
 
       - name: Install Allure CLI and Generate Report
-        if: always()  # ✅ Always run this step
+        if: always() 
         uses: simple-elf/allure-report-action@v1.7
         with:
           allure_results: allure-results
           allure_report: allure-report
 
       - name: Deploy Allure Report to gh-pages
-        if: always()  # ✅ Always run this step
+        if: always()  
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -68,5 +70,5 @@ jobs:
           force_orphan: true
 
       - name: Fail job if tests failed
-        if: failure()  # ✅ Fail the job if any previous step failed
+        if: steps.run_tests.outcome == 'failure'  
         run: exit 1
